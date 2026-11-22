@@ -27,7 +27,7 @@ Permitir o registro de receitas e despesas e apresentar o total de entradas, o t
 
 ## Como executar
 
-Não há dependências externas nem etapa de instalação nesta versão inicial.
+Não há dependências externas nem etapa de instalação nesta versão.
 
 1. Baixe ou clone o repositório.
 2. Abra o arquivo `src/index.html` em um navegador.
@@ -40,7 +40,64 @@ python -m http.server 8000 --directory src
 
 Depois, acesse `http://localhost:8000`.
 
-## Organização inicial
+### Requisito para executar os testes
+
+As regras financeiras usam módulos JavaScript (ES Modules). Para executar os testes automatizados com `node:test`, instale uma versão LTS do [Node.js](https://nodejs.org/). Não é necessário instalar pacotes adicionais.
+
+Quando os testes forem criados pela integrante responsável, poderão ser executados na pasta do projeto com `node --test`.
+
+## Módulo financeiro — responsabilidade de Maurício
+
+As regras de cadastro, validação e cálculo estão em `src/js/finance.js`. O módulo é independente da interface: ele recebe dados e devolve resultados, sem manipular elementos HTML ou acessar `localStorage`.
+
+### Estrutura de um lançamento
+
+Cada receita ou despesa é representada por um objeto com esta estrutura:
+
+```js
+{
+  id: "identificador-unico",
+  type: "income", // ou "expense"
+  description: "Salário",
+  amount: 2500.00
+}
+```
+
+Os valores são armazenados como números positivos. O tipo indica se o valor será somado às receitas ou às despesas.
+
+### Funções disponíveis
+
+| Função | Finalidade |
+|---|---|
+| `createTransaction(type, description, amount)` | Cria e valida um lançamento. |
+| `registerIncome(transactions, description, amount)` | Retorna uma nova lista com uma receita. |
+| `registerExpense(transactions, description, amount)` | Retorna uma nova lista com uma despesa. |
+| `calculateSummary(transactions)` | Calcula receitas, despesas, saldo e quantidade de lançamentos. |
+| `validateDescription(description)` | Impede descrições vazias. |
+| `validateAmount(amount)` | Impede valores vazios, inválidos, zero ou negativos. |
+
+Exemplo de uso em outro módulo JavaScript:
+
+```js
+import {
+  registerIncome,
+  registerExpense,
+  calculateSummary,
+} from "./finance.js";
+
+let transactions = [];
+transactions = registerIncome(transactions, "Salário", 2500);
+transactions = registerExpense(transactions, "Internet", 100);
+
+const summary = calculateSummary(transactions);
+console.log(summary);
+// { totalIncome: 2500, totalExpenses: 100, balance: 2400,
+//   transactionCount: 2 }
+```
+
+**Importante para a integração:** `registerIncome` e `registerExpense` não modificam a lista original. Elas retornam uma nova lista. Portanto, a interface deve guardar o retorno, por exemplo: `transactions = registerIncome(transactions, descricao, valor)`. A persistência no `localStorage` e a atualização da tela ficam a cargo da integração com `app.js`.
+
+## Organização do projeto
 
 ```text
 meu-dinheiro/
@@ -60,8 +117,8 @@ meu-dinheiro/
 │   └── evidencias/
 │       └── .gitkeep
 ├── package.json
-├── .gitignore
-└── README.md
+├── README.md
+└── .gitignore
 ```
 
 ## Responsabilidades da equipe
