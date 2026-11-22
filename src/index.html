@@ -3,21 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MeuDinheiro - controle financeiro pessoal.">
+  <meta name="description" content="MeuDinheiro - controle financeiro simples de receitas e despesas">
   <title>MeuDinheiro</title>
-  <link rel="stylesheet" href="./css/style.css">
-  <script type="module" src="./js/app.js"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main>
-    <h1>MeuDinheiro</h1>
-    <p>Aplicação de controle financeiro pessoal.</p>
+  <header class="topo">
+    <div class="container">
+      <h1 class="logo">Meu<span>Dinheiro</span></h1>
+      <p class="subtitulo">Controle simples de receitas e despesas</p>
+    </div>
+  </header>
 
-    <!-- Thiago: desenvolver a interface e os elementos de interação. -->
-    <!-- Maurício: integrar as operações e regras financeiras. -->
-    <section id="app">
-      <p>A interface será desenvolvida pela equipe.</p>
+  <main class="container">
+    <!-- Resumo: totais e saldo -->
+    <section class="resumo" aria-label="Resumo financeiro">
+      <article class="cartao cartao-receita">
+        <h2>Receitas</h2>
+        <p id="total-receitas" class="valor">R$ 0,00</p>
+      </article>
+      <article class="cartao cartao-despesa">
+        <h2>Despesas</h2>
+        <p id="total-despesas" class="valor">R$ 0,00</p>
+      </article>
+      <article class="cartao cartao-saldo">
+        <h2>Saldo</h2>
+        <p id="saldo" class="valor" aria-live="polite">R$ 0,00</p>
+      </article>
     </section>
+
+    <div class="grade">
+      <!-- Formulário de cadastro -->
+      <section class="painel" aria-labelledby="titulo-form">
+        <h2 id="titulo-form">Novo lançamento</h2>
+
+        <form id="form-lancamento" novalidate>
+          <fieldset class="tipo">
+            <legend>Tipo</legend>
+            <label class="opcao opcao-receita">
+              <input type="radio" name="tipo" value="income" checked>
+              <span>Receita</span>
+            </label>
+            <label class="opcao opcao-despesa">
+              <input type="radio" name="tipo" value="expense">
+              <span>Despesa</span>
+            </label>
+          </fieldset>
+
+          <div class="campo">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" name="descricao" maxlength="80"
+                   placeholder="Ex.: Salário, Mercado, Aluguel" autocomplete="off" required>
+          </div>
+
+          <div class="campo">
+            <label for="valor">Valor (R$)</label>
+            <input type="text" id="valor" name="valor" inputmode="decimal"
+                   placeholder="0,00" autocomplete="off" required>
+          </div>
+
+          <p id="mensagem" class="mensagem" role="alert" hidden></p>
+
+          <button type="submit" class="botao">Adicionar</button>
+        </form>
+      </section>
+
+      <!-- Histórico -->
+      <section class="painel" aria-labelledby="titulo-historico">
+        <h2 id="titulo-historico">Histórico</h2>
+        <p id="historico-vazio" class="vazio">Nenhum lançamento cadastrado ainda.</p>
+        <ul id="historico" class="historico"></ul>
+      </section>
+    </div>
   </main>
+
+  <footer class="rodape">
+    <div class="container">
+      <p>Os dados ficam salvos apenas neste navegador.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
