@@ -44,7 +44,11 @@ Depois, acesse `http://localhost:8000`.
 
 As regras financeiras usam módulos JavaScript (ES Modules). Para executar os testes automatizados com `node:test`, instale uma versão LTS do [Node.js](https://nodejs.org/). Não é necessário instalar pacotes adicionais.
 
-Quando os testes forem criados pela integrante responsável, poderão ser executados na pasta do projeto com `node --test`.
+Os testes ficam em `tests/` e são executados na pasta do projeto com:
+
+```bash
+npm test
+```
 
 ## Módulo financeiro — responsabilidade de Maurício
 
@@ -135,7 +139,23 @@ Cada integrante deverá trabalhar em sua própria branch, realizar commits claro
 
 ## Testes, pipeline e publicação
 
-Os testes automatizados, o workflow de CI/CD e a publicação serão implementados pelos integrantes responsáveis por essas atividades. As instruções específicas serão adicionadas a este README conforme essas etapas forem concluídas.
+### Testes automatizados (responsável: Sabrina)
+
+Os testes usam `node:test` e `node:assert` (sem dependências externas) e estão em `tests/finance.test.js`. Eles cobrem:
+
+- **Cadastro de receita:** lançamento válido, vírgula decimal, lista original preservada e rejeição de valor/descrição inválidos.
+- **Cadastro de despesa:** lançamento válido e rejeição de descrição vazia e valor inválido.
+- **Cálculo do saldo:** receitas menos despesas, lista vazia, saldo negativo e arredondamento de centavos.
+
+Evidências de execução em `docs/evidencias/`:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `01-testes-passando.txt` | Execução inicial: 7 testes, todos passando. |
+| `02-testes-falhando-simulacao.txt` | Simulação de falha (saldo calculado com `+` no lugar de `-`): 2 testes falham. |
+| `03-testes-passando-apos-correcao.txt` | Após a correção: 7 testes passando novamente. |
+
+O workflow de CI/CD e a publicação serão implementados pela integrante responsável. As instruções específicas serão adicionadas a este README conforme essa etapa for concluída.
 
 ## Aplicação publicada
 

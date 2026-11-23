@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Projeto acadêmico de controle financeiro pessoal."
+  "description": "Projeto acadêmico de controle financeiro pessoal.",
+  "scripts": {
+    "test": "node --test"
+  }
 }
