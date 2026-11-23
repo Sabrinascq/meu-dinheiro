@@ -1,0 +1,56 @@
+
+> meu-dinheiro@1.0.0 test
+> node --test
+
+TAP version 13
+# Subtest: cadastro de receita: adiciona uma receita válida à lista
+ok 1 - cadastro de receita: adiciona uma receita válida à lista
+  ---
+  duration_ms: 3.29009
+  type: 'test'
+  ...
+# Subtest: cadastro de receita: não altera a lista original e rejeita valor inválido
+ok 2 - cadastro de receita: não altera a lista original e rejeita valor inválido
+  ---
+  duration_ms: 0.496474
+  type: 'test'
+  ...
+# Subtest: cadastro de despesa: adiciona uma despesa válida à lista
+ok 3 - cadastro de despesa: adiciona uma despesa válida à lista
+  ---
+  duration_ms: 0.17097
+  type: 'test'
+  ...
+# Subtest: cadastro de despesa: rejeita descrição vazia e valor inválido
+ok 4 - cadastro de despesa: rejeita descrição vazia e valor inválido
+  ---
+  duration_ms: 0.170766
+  type: 'test'
+  ...
+# Subtest: cálculo do saldo: receitas menos despesas
+ok 5 - cálculo do saldo: receitas menos despesas
+  ---
+  duration_ms: 0.735339
+  type: 'test'
+  ...
+# Subtest: cálculo do saldo: lista vazia resulta em saldo zero
+ok 6 - cálculo do saldo: lista vazia resulta em saldo zero
+  ---
+  duration_ms: 0.10612
+  type: 'test'
+  ...
+# Subtest: cálculo do saldo: saldo negativo e arredondamento de centavos
+ok 7 - cálculo do saldo: saldo negativo e arredondamento de centavos
+  ---
+  duration_ms: 0.127855
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 69.445471
