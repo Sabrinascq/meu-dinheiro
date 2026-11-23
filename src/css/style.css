@@ -1,18 +1,261 @@
-/* Thiago: desenvolver a identidade visual e a interface responsiva. */
+/* ===== MeuDinheiro - estilos (Thiago: interface responsiva) ===== */
 
-* {
-  box-sizing: border-box;
+:root {
+  --fundo: #f4f6f8;
+  --superficie: #ffffff;
+  --texto: #1f2933;
+  --texto-suave: #616e7c;
+  --borda: #d9e2ec;
+  --primaria: #2f6fed;
+  --primaria-escura: #1f54c2;
+  --receita: #1a8a4a;
+  --receita-fundo: #e6f6ec;
+  --despesa: #c62828;
+  --despesa-fundo: #fdecec;
+  --raio: 12px;
+  --sombra: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #11161c;
+    --superficie: #1b222b;
+    --texto: #e4e7eb;
+    --texto-suave: #9aa5b1;
+    --borda: #2e3742;
+    --primaria: #5b8def;
+    --primaria-escura: #3f74dd;
+    --receita: #4cc27d;
+    --receita-fundo: #16301f;
+    --despesa: #f06a6a;
+    --despesa-fundo: #3a1b1b;
+    --sombra: none;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  margin: 0;
-  padding: 2rem;
-  font-family: Arial, sans-serif;
-  color: #26332d;
-  background: #f5f7f5;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-main {
+.container {
+  width: 100%;
   max-width: 960px;
   margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Cabeçalho */
+.topo {
+  background: var(--primaria);
+  color: #fff;
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+.logo { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+.logo span { font-weight: 400; }
+.subtitulo { opacity: 0.9; font-size: 0.95rem; }
+
+main { flex: 1; }
+
+/* Cartões de resumo */
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.cartao {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 16px;
+  box-shadow: var(--sombra);
+  border-top: 4px solid var(--borda);
+}
+.cartao h2 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+.cartao-receita { border-top-color: var(--receita); }
+.cartao-receita .valor { color: var(--receita); }
+.cartao-despesa { border-top-color: var(--despesa); }
+.cartao-despesa .valor { color: var(--despesa); }
+.cartao-saldo { border-top-color: var(--primaria); }
+.valor.negativo { color: var(--despesa); }
+
+/* Painéis */
+.grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+.painel {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 20px;
+  box-shadow: var(--sombra);
+}
+.painel > h2 { font-size: 1.1rem; margin-bottom: 16px; }
+
+/* Formulário */
+.tipo {
+  border: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.tipo legend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.opcao { cursor: pointer; }
+.opcao input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.opcao span {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  border: 2px solid var(--borda);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.opcao-receita input:checked + span {
+  border-color: var(--receita);
+  background: var(--receita-fundo);
+  color: var(--receita);
+}
+.opcao-despesa input:checked + span {
+  border-color: var(--despesa);
+  background: var(--despesa-fundo);
+  color: var(--despesa);
+}
+.opcao input:focus-visible + span { outline: 3px solid var(--primaria); outline-offset: 2px; }
+
+.campo { margin-bottom: 14px; }
+.campo label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.campo input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  color: var(--texto);
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+}
+.campo input:focus {
+  outline: none;
+  border-color: var(--primaria);
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.25);
+}
+.campo input[aria-invalid="true"] { border-color: var(--despesa); }
+
+.mensagem {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.mensagem.erro { background: var(--despesa-fundo); color: var(--despesa); }
+.mensagem.sucesso { background: var(--receita-fundo); color: var(--receita); }
+
+.botao {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--primaria);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.botao:hover { background: var(--primaria-escura); }
+.botao:focus-visible { outline: 3px solid var(--texto); outline-offset: 2px; }
+
+/* Histórico */
+.vazio { color: var(--texto-suave); font-style: italic; }
+.historico { list-style: none; max-height: 480px; overflow-y: auto; }
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--borda);
+}
+.item:last-child { border-bottom: none; }
+.item-info { min-width: 0; }
+.item-descricao {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.item-tipo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.item-valor {
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.item.income .item-tipo,
+.item.income .item-valor { color: var(--receita); }
+.item.expense .item-tipo,
+.item.expense .item-valor { color: var(--despesa); }
+
+/* Rodapé */
+.rodape {
+  padding: 16px 0;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  text-align: center;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 720px) {
+  .grade { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .resumo { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cartao-saldo { grid-column: 1 / -1; }
+  .valor { font-size: 1.25rem; }
+  .topo { padding: 18px 0; margin-bottom: 16px; }
+  .painel { padding: 16px; }
 }
