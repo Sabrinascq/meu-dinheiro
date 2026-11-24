@@ -165,6 +165,15 @@ O pipeline fica em `.github/workflows/ci.yml` e roda no GitHub Actions em todo p
 
 Se algum teste falhar, o build e o deploy não são executados e a versão anterior do site continua no ar. Isso foi testado no PR #5: um erro proposital no cálculo do saldo fez o pipeline falhar e, depois da correção, ele voltou a passar e o deploy foi feito.
 
+Prints das execuções em `docs/evidencias/`:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `04-pipeline-sucesso.png` | Merge do PR #4: testes, build e deploy passando. |
+| `05-pipeline-falha.png` | PR #5 com erro no saldo: testes falham, build e deploy são pulados. |
+| `06-pipeline-apos-correcao.png` | Merge do PR #5 após a correção: tudo passando e deploy feito. |
+| `07-pr-falha-e-correcao.png` | PR #5 com o commit que falhou e o commit de correção. |
+
 ## Aplicação publicada
 
 https://marianagpalacios.github.io/meu-dinheiro/
