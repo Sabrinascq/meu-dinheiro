@@ -116,7 +116,7 @@ meu-dinheiro/
 │   └── .gitkeep
 ├── .github/
 │   └── workflows/
-│       └── .gitkeep
+│       └── ci.yml
 ├── docs/
 │   └── evidencias/
 │       └── .gitkeep
@@ -155,11 +155,19 @@ Evidências de execução em `docs/evidencias/`:
 | `02-testes-falhando-simulacao.txt` | Simulação de falha (saldo calculado com `+` no lugar de `-`): 2 testes falham. |
 | `03-testes-passando-apos-correcao.txt` | Após a correção: 7 testes passando novamente. |
 
-O workflow de CI/CD e a publicação serão implementados pela integrante responsável. As instruções específicas serão adicionadas a este README conforme essa etapa for concluída.
+### Pipeline de CI/CD (responsável: Letícia)
+
+O pipeline fica em `.github/workflows/ci.yml` e roda no GitHub Actions em todo pull request e todo push na `main`. Ele tem três jobs, um depois do outro:
+
+- **testes:** executa `npm test`.
+- **build:** empacota a pasta `src/`. Só roda se os testes passarem.
+- **deploy:** publica no GitHub Pages. Só roda em push na `main`.
+
+Se algum teste falhar, o build e o deploy não são executados e a versão anterior do site continua no ar. Isso foi testado no PR #5: um erro proposital no cálculo do saldo fez o pipeline falhar e, depois da correção, ele voltou a passar e o deploy foi feito.
 
 ## Aplicação publicada
 
-_Ainda não publicada. O link será inserido após a configuração do GitHub Pages._
+https://marianagpalacios.github.io/meu-dinheiro/
 
 ## Integrantes
 
