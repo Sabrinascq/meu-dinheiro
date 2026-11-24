@@ -107,7 +107,7 @@ export function calculateSummary(transactions) {
   // flutuante em operações monetárias simples.
   summary.totalIncome = roundCurrency(summary.totalIncome);
   summary.totalExpenses = roundCurrency(summary.totalExpenses);
-  summary.balance = roundCurrency(summary.totalIncome - summary.totalExpenses);
+  summary.balance = roundCurrency(summary.totalIncome + summary.totalExpenses);
   summary.transactionCount = transactions.length;
 
   return summary;
