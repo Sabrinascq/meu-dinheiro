@@ -1,110 +1,129 @@
+
 # MeuDinheiro
 
-Aplicação web simples de controle financeiro pessoal, desenvolvida como projeto da disciplina **Gerência de Configuração e Manutenção de Software**.
+Aplicação web de controle financeiro pessoal desenvolvida para a atividade **Operação Deploy — Do código à produção**, da disciplina de **Gerência de Configuração e Manutenção de Software** da UTFPR, Campus Cornélio Procópio.
 
-## Objetivo
+O projeto foi utilizado para exercitar desenvolvimento colaborativo, controle de versão, testes automatizados, integração contínua e publicação de uma aplicação estática.
 
-Permitir o registro de receitas e despesas e apresentar o total de entradas, o total de saídas e o saldo financeiro.
+**Aplicação publicada:** https://marianagpalacios.github.io/meu-dinheiro/  
+**Repositório:** https://github.com/marianagpalacios/meu-dinheiro
 
-## Escopo definido pela equipe
+## Funcionalidades
 
 - Cadastro de receitas com descrição e valor.
 - Cadastro de despesas com descrição e valor.
-- Cálculo de receitas, despesas e saldo.
-- Histórico de movimentações.
-- Persistência dos registros no `localStorage` do navegador.
+- Validação de descrições e valores informados.
+- Cálculo automático dos totais de receitas, despesas e saldo.
+- Histórico de movimentações, com os lançamentos mais recentes primeiro.
+- Persistência dos lançamentos no `localStorage` do navegador.
+- Interface responsiva para diferentes tamanhos de tela.
 
-**Fora do escopo:** login, backend, banco de dados, categorias, filtros, edição e exclusão de lançamentos. Os dados ficam armazenados somente no navegador utilizado.
+Os lançamentos ficam armazenados localmente no navegador utilizado. A aplicação não exige cadastro de usuário nem possui integração bancária.
 
 ## Tecnologias
 
-- HTML, CSS e JavaScript: interface e funcionalidades.
-- Node.js com `node:test`: execução dos testes automatizados.
-- `localStorage`: armazenamento local dos lançamentos.
-- Git e GitHub: versionamento e colaboração.
-- GitHub Actions: automação de testes e publicação.
-- GitHub Pages: hospedagem da aplicação.
+| Tecnologia | Utilização |
+|---|---|
+| HTML5 | Estrutura da página. |
+| CSS3 | Estilização e responsividade. |
+| JavaScript (ES Modules) | Interface, validações e regras financeiras. |
+| `localStorage` | Armazenamento das movimentações no navegador. |
+| Node.js 22 | Ambiente utilizado pelo pipeline para executar os testes. |
+| `node:test` e `node:assert/strict` | Testes automatizados sem dependências externas. |
+| Git e GitHub | Versionamento, branches, commits e pull requests. |
+| GitHub Actions | Execução automatizada de testes, preparação do artefato e deploy. |
+| GitHub Pages | Hospedagem da aplicação estática. |
 
-## Como executar
+## Como executar a aplicação
 
-Não há dependências externas nem etapa de instalação nesta versão.
+### Versão publicada
 
-1. Baixe ou clone o repositório.
-2. Abra o arquivo `src/index.html` em um navegador.
+Acesse diretamente:
 
-Opcionalmente, para executar por um servidor local com Python:
+https://marianagpalacios.github.io/meu-dinheiro/
 
-```bash
-python -m http.server 8000 --directory src
-```
+### Execução local
 
-Depois, acesse `http://localhost:8000`.
+Não é necessário instalar dependências para executar a interface. Para trabalhar com os módulos JavaScript no navegador, recomenda-se iniciar um servidor HTTP local.
 
-### Requisito para executar os testes
+1. Clone o repositório e entre na pasta:
 
-As regras financeiras usam módulos JavaScript (ES Modules). Para executar os testes automatizados com `node:test`, instale uma versão LTS do [Node.js](https://nodejs.org/). Não é necessário instalar pacotes adicionais.
+   ```bash
+   git clone https://github.com/marianagpalacios/meu-dinheiro.git
+   cd meu-dinheiro
+   ```
 
-Os testes ficam em `tests/` e são executados na pasta do projeto com:
+2. No Windows, com Python instalado, inicie o servidor:
+
+   ```powershell
+   py -m http.server 8000 --bind 127.0.0.1 --directory src
+   ```
+
+   Em outros ambientes com Python 3, um comando equivalente é:
+
+   ```bash
+   python3 -m http.server 8000 --bind 127.0.0.1 --directory src
+   ```
+
+3. Abra no navegador:
+
+   http://127.0.0.1:8000/
+
+Para interromper o servidor, pressione `Ctrl + C` no terminal. Abrir o HTML diretamente via `file://` pode causar restrições no carregamento dos módulos JavaScript; por isso, prefira o servidor HTTP.
+
+## Testes automatizados
+
+O projeto contém **sete testes automatizados** em `tests/finance.test.js`, implementados com os módulos nativos do Node.js.
+
+Para executá-los, instale o [Node.js](https://nodejs.org/) (preferencialmente a versão 22, utilizada no CI) e rode, na raiz do repositório:
 
 ```bash
 npm test
 ```
 
-## Módulo financeiro — responsabilidade de Maurício
+O comando executa `node --test`, conforme definido em `package.json`. Não há pacotes externos para instalar.
 
-As regras de cadastro, validação e cálculo estão em `src/js/finance.js`. O módulo é independente da interface: ele recebe dados e devolve resultados, sem manipular elementos HTML ou acessar `localStorage`.
+Os testes verificam:
 
-### Estrutura de um lançamento
+1. Cadastro de receita válida, com identificação, descrição, tipo e valor.
+2. Preservação da lista original, aceitação de vírgula decimal e rejeição de entradas inválidas para receitas.
+3. Cadastro de despesa válida.
+4. Rejeição de descrições vazias e valores inválidos para despesas.
+5. Cálculo de saldo como **receitas menos despesas**.
+6. Resumo de uma lista vazia.
+7. Saldo negativo e arredondamento de centavos.
 
-Cada receita ou despesa é representada por um objeto com esta estrutura:
+Exemplo verificado: receita de R$ 2.500,00 e despesa de R$ 100,00 produzem saldo de **R$ 2.400,00**.
 
-```js
-{
-  id: "identificador-unico",
-  type: "income", // ou "expense"
-  description: "Salário",
-  amount: 2500.00
-}
-```
+## Organização do código
 
-Os valores são armazenados como números positivos. O tipo indica se o valor será somado às receitas ou às despesas.
+A aplicação separa as regras financeiras das operações de interface:
 
-### Funções disponíveis
+- `src/js/finance.js`: criação e validação dos lançamentos, cadastro de receitas e despesas e cálculo do resumo. Não manipula HTML nem acessa `localStorage`.
+- `src/js/app.js`: eventos do formulário, conversão dos valores digitados, renderização dos cartões e do histórico e persistência no navegador.
+- `src/index.html`: estrutura da interface.
+- `src/css/style.css`: aparência e layout responsivo.
 
-| Função | Finalidade |
-|---|---|
-| `createTransaction(type, description, amount)` | Cria e valida um lançamento. |
-| `registerIncome(transactions, description, amount)` | Retorna uma nova lista com uma receita. |
-| `registerExpense(transactions, description, amount)` | Retorna uma nova lista com uma despesa. |
-| `calculateSummary(transactions)` | Calcula receitas, despesas, saldo e quantidade de lançamentos. |
-| `validateDescription(description)` | Impede descrições vazias. |
-| `validateAmount(amount)` | Impede valores vazios, inválidos, zero ou negativos. |
+Cada lançamento contém os campos `id`, `type`, `description` e `amount`. O campo `type` assume `income` (receita) ou `expense` (despesa), e `amount` representa um valor positivo.
 
-Exemplo de uso em outro módulo JavaScript:
+As funções `registerIncome` e `registerExpense` **retornam uma nova lista**, sem alterar a lista recebida. O resumo é calculado pela função `calculateSummary`.
 
-```js
-import {
-  registerIncome,
-  registerExpense,
-  calculateSummary,
-} from "./finance.js";
-
-let transactions = [];
-transactions = registerIncome(transactions, "Salário", 2500);
-transactions = registerExpense(transactions, "Internet", 100);
-
-const summary = calculateSummary(transactions);
-console.log(summary);
-// { totalIncome: 2500, totalExpenses: 100, balance: 2400,
-//   transactionCount: 2 }
-```
-
-**Importante para a integração:** `registerIncome` e `registerExpense` não modificam a lista original. Elas retornam uma nova lista. Portanto, a interface deve guardar o retorno, por exemplo: `transactions = registerIncome(transactions, descricao, valor)`. A persistência no `localStorage` e a atualização da tela ficam a cargo da integração com `app.js`.
-
-## Organização do projeto
+## Estrutura do repositório
 
 ```text
 meu-dinheiro/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── docs/
+│   └── evidencias/
+│       ├── 01-testes-passando.txt
+│       ├── 02-testes-falhando-simulacao.txt
+│       ├── 03-testes-passando-apos-correcao.txt
+│       ├── 04-pipeline-sucesso.png
+│       ├── 05-pipeline-falha.png
+│       ├── 06-pipeline-apos-correcao.png
+│       └── 07-pr-falha-e-correcao.png
 ├── src/
 │   ├── index.html
 │   ├── css/
@@ -113,82 +132,85 @@ meu-dinheiro/
 │       ├── app.js
 │       └── finance.js
 ├── tests/
-│   └── .gitkeep
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── docs/
-│   └── evidencias/
-│       └── .gitkeep
+│   └── finance.test.js
 ├── package.json
-├── README.md
-└── .gitignore
+└── README.md
 ```
 
-## Responsabilidades da equipe
+## Controle de versão e colaboração
 
-| Integrante | Responsabilidade |
+A equipe utilizou branches e pull requests para integrar contribuições à `main`, mantendo histórico dos commits e das mudanças.
+
+| Pull request | Contribuição |
 |---|---|
-| Mariana | Repositório, estrutura inicial, README, integração e relatório técnico |
-| Maurício | Estrutura dos lançamentos, cadastro de receitas e despesas, cálculo e validações financeiras |
-| Thiago | Interface HTML/CSS e interação com as funções financeiras |
-| Sabrina | Testes automatizados com `node:test` e evidências de qualidade |
-| Letícia | Workflow do GitHub Actions, CI/CD e publicação no GitHub Pages |
+| [#1](https://github.com/marianagpalacios/meu-dinheiro/pull/1) | Interface e integração com as regras financeiras. |
+| [#2](https://github.com/marianagpalacios/meu-dinheiro/pull/2) | Testes automatizados. |
+| [#4](https://github.com/marianagpalacios/meu-dinheiro/pull/4) | Pipeline de testes, build e deploy. |
+| [#5](https://github.com/marianagpalacios/meu-dinheiro/pull/5) | Simulação de falha no cálculo do saldo e correção. |
+| [#6](https://github.com/marianagpalacios/meu-dinheiro/pull/6) | Documentação do pipeline no README. |
 
-Cada integrante deverá trabalhar em sua própria branch, realizar commits claros e abrir um pull request para integração, conforme a organização definida pelo grupo.
+O PR #3 foi encerrado sem merge. O pipeline integrado à `main` corresponde ao PR #4.
 
-## Testes, pipeline e publicação
+[Consultar o histórico de commits](https://github.com/marianagpalacios/meu-dinheiro/commits/main).
 
-### Testes automatizados (responsável: Sabrina)
+## Pipeline de CI/CD
 
-Os testes usam `node:test` e `node:assert` (sem dependências externas) e estão em `tests/finance.test.js`. Eles cobrem:
+O workflow está em [`.github/workflows/ci.yml`](.github/workflows/ci.yml) e é executado pelo GitHub Actions em:
 
-- **Cadastro de receita:** lançamento válido, vírgula decimal, lista original preservada e rejeição de valor/descrição inválidos.
-- **Cadastro de despesa:** lançamento válido e rejeição de descrição vazia e valor inválido.
-- **Cálculo do saldo:** receitas menos despesas, lista vazia, saldo negativo e arredondamento de centavos.
+- Pull requests direcionados à `main`.
+- Pushes realizados na `main`.
 
-Evidências de execução em `docs/evidencias/`:
+A execução possui três jobs dependentes:
+
+1. **`testes`:** prepara o Node.js 22 no Ubuntu e executa `npm test`.
+2. **`build`:** depende de `testes` e envia o conteúdo da pasta `src/` como artefato do GitHub Pages, usando `actions/upload-pages-artifact@v3`. Como a aplicação é estática, não há compilação tradicional.
+3. **`deploy`:** depende de `build` e publica com `actions/deploy-pages@v4` **somente em eventos de push na `main`**.
+
+Fluxo: `testes` → `build` → `deploy` (o último job apenas nos pushes da `main`).
+
+Se os testes falharem, o `build` não é executado. Em pull requests, o job `deploy` permanece pulado pela condição do workflow, inclusive quando os testes passam. Isso permite validar as branches sem publicar versões intermediárias.
+
+### Demonstração de falha e recuperação
+
+No [PR #5](https://github.com/marianagpalacios/meu-dinheiro/pull/5), a equipe introduziu intencionalmente um erro em `src/js/finance.js`: a fórmula do saldo passou a **somar** receitas e despesas em vez de **subtrair** as despesas.
+
+- **Falha:** os testes de saldo detectaram o erro; o job `testes` falhou e o `build` foi pulado. [Execução reprovada](https://github.com/marianagpalacios/meu-dinheiro/actions/runs/45478647120).
+- **Correção:** a subtração foi restaurada; `testes` e `build` passaram na verificação do pull request. [Execução após a correção](https://github.com/marianagpalacios/meu-dinheiro/actions/runs/45481123227).
+- **Publicação:** após o merge do PR #5 na `main`, os jobs `testes`, `build` e `deploy` passaram. [Execução com deploy aprovado](https://github.com/marianagpalacios/meu-dinheiro/actions/runs/45484900759).
+
+Também estão disponíveis a [primeira execução aprovada na `main`](https://github.com/marianagpalacios/meu-dinheiro/actions/runs/45473888267) e uma [execução posterior aprovada](https://github.com/marianagpalacios/meu-dinheiro/actions/runs/45486789783).
+
+### Evidências
+
+Os arquivos da pasta [`docs/evidencias/`](docs/evidencias/) documentam os testes e a execução do pipeline:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `01-testes-passando.txt` | Execução inicial: 7 testes, todos passando. |
-| `02-testes-falhando-simulacao.txt` | Simulação de falha (saldo calculado com `+` no lugar de `-`): 2 testes falham. |
-| `03-testes-passando-apos-correcao.txt` | Após a correção: 7 testes passando novamente. |
+| `01-testes-passando.txt` | Execução local inicial: sete testes aprovados. |
+| `02-testes-falhando-simulacao.txt` | Execução local com erro intencional no saldo. |
+| `03-testes-passando-apos-correcao.txt` | Nova execução local após a correção. |
+| `04-pipeline-sucesso.png` | Execução inicial aprovada com testes, build e deploy. |
+| `05-pipeline-falha.png` | Testes reprovados e jobs dependentes pulados. |
+| `06-pipeline-apos-correcao.png` | Execução aprovada na `main` após a correção, com deploy. |
+| `07-pr-falha-e-correcao.png` | Histórico dos commits de falha e correção no PR #5. |
 
-### Pipeline de CI/CD (responsável: Letícia)
+## Equipe
 
-O pipeline fica em `.github/workflows/ci.yml` e roda no GitHub Actions em todo pull request e todo push na `main`. Ele tem três jobs, um depois do outro:
-
-- **testes:** executa `npm test`.
-- **build:** empacota a pasta `src/`. Só roda se os testes passarem.
-- **deploy:** publica no GitHub Pages. Só roda em push na `main`.
-
-Se algum teste falhar, o build e o deploy não são executados e a versão anterior do site continua no ar. Isso foi testado no PR #5: um erro proposital no cálculo do saldo fez o pipeline falhar e, depois da correção, ele voltou a passar e o deploy foi feito.
-
-Prints das execuções em `docs/evidencias/`:
-
-| Arquivo | Conteúdo |
+| Integrante | Responsabilidade principal |
 |---|---|
-| `04-pipeline-sucesso.png` | Merge do PR #4: testes, build e deploy passando. |
-| `05-pipeline-falha.png` | PR #5 com erro no saldo: testes falham, build e deploy são pulados. |
-| `06-pipeline-apos-correcao.png` | Merge do PR #5 após a correção: tudo passando e deploy feito. |
-| `07-pr-falha-e-correcao.png` | PR #5 com o commit que falhou e o commit de correção. |
+| Mariana Gasparotto Palácios | Organização do repositório, integração, evidências e relatório técnico. |
+| Mauricio Albuquerque Christakis | Regras financeiras, cálculo do saldo e validações. |
+| Thiago Henrique Almeida dos Santos | Interface HTML/CSS e integração com o módulo financeiro. |
+| Sabrina Cavalcante de Queiroz | Testes automatizados e registros das execuções locais. |
+| Letícia Bento Pinto | Configuração do GitHub Actions, CI/CD e GitHub Pages. |
 
-## Aplicação publicada
+As atividades foram integradas e revisadas de forma colaborativa.
 
-https://marianagpalacios.github.io/meu-dinheiro/
+## Limitações
 
-## Integrantes
+- Os lançamentos são armazenados somente no navegador, sem sincronização entre dispositivos.
+- Não há autenticação, backend, banco de dados remoto ou integração com instituições financeiras.
+- Não foram implementados filtros, categorias, edição ou exclusão de lançamentos.
+- Em situações excepcionais de falha do `localStorage`, o feedback de salvamento pode ser aprimorado.
 
-- Mariana
-- Maurício
-- Thiago
-- Sabrina
-- Letícia
-
-## Limitações previstas
-
-- Os dados ficam somente no `localStorage` do navegador utilizado.
-- Não há sincronização entre dispositivos.
-- Não há integração com bancos ou serviços financeiros.
-- A aplicação tem finalidade acadêmica e de organização financeira básica.
+O MeuDinheiro tem finalidade acadêmica e demonstra o processo de integração, validação e entrega de uma aplicação web simples.
